@@ -32,7 +32,83 @@ mean(rnorm(10^7,50,10))
 
 As we can see the mean converge to $\mu=50$ as $n$ increase.
 
+### Ex. 3.28
+
+A survey is planned to estimate the population proportion $\pi$ supporting more government action to address global warming. For a simple random sample, if $\pi$ may be near 0.50, how large should n be so that the standard error of the sample proportion is 0.04?
+
+**Solution**
+
+The standard error for a proportion is 
+$$
+SE(\hat\pi) = \sqrt{\frac{\hat\pi(1-\hat\pi)}{n}}
+$$
+
+By solving for $n$ we can determine how big the sample should be in order to obtain a standard error equal to 0.04.
+$$
+n = \frac{\hat\pi (1-\hat\pi)}{SE^2} = \frac{0.5^2}{0.04^2}= 156
+$$
+
+
 ## FSDS - Chapter 4
+### EX. 4.44
+Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the `Houses` data file mentioned in Exercise 4.31.
+(a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution.
+(b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters.
+(c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions.
+(d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
+
+**Solution**
+
+(a) The ML estimates for $\mu$ and $\sigma$ are 
+$$
+\hat\mu = \frac{\sum_{i=1}^n y_i}{n}\\
+\hat\sigma=\sqrt\frac{\sum_{i=1}^n (y_i-\hat\mu)^2}{n}
+$$
+We evaluate them as
+```{r}
+library(MASS)
+df <- read.table("./Houses.dat.txt", header=TRUE, 
+   sep="")
+prices<-df$price
+
+mu_n<-mean(prices)
+sigma_n<-sqrt(sum((prices-mu_n)^2)/length(prices))
+mu_n
+sigma_n
+```
+
+(b) For the lognormal distribution the estimates are
+$$
+\hat\mu = \frac{\sum_{i=1}^n \log y_i}{n}\\
+\hat\sigma=\sqrt\frac{\sum_{i=1}^n (\log y_i-\hat\mu)^2}{n}
+$$
+We evaluate them as
+```{r}
+log_prices<-log(prices)
+mu_ln<-mean(log_prices)
+sigma_ln<-sqrt(sum((log_prices-mu_ln)^2)/length(log_prices))
+mu_ln
+sigma_ln
+```
+
+(c) For the normal distribution, the mean and variance of $Y$ are the parameters estimated in point (a), while the mean and variance for the lognormal distribution are
+$$
+E[Y] = e^{\mu+\sigma^2/2} \qquad var[Y]=(e^{\sigma^2}-1)E[Y]^2
+$$
+Using the estimates provided in (b), we get the values
+```{r}
+exp(mu_ln+sigma_ln^2/2) #mean
+sqrt((exp(sigma_ln^2)-1))*exp(mu_ln+sigma_ln^2/2) #sd
+```
+and we observe that while the means are very similar, the lognormal standard deviation is smaller.
+
+(d) We plot the histogram for the data and the distributions obtain with the estimated parameters and observe that the lognormal distribution (in red) seems to be in greater agreement with the data.
+```{r}
+hist.scott(prices,main="")
+curve( dnorm(x,mu_n,sigma_n),add=T)
+curve( dlnorm(x,mu_ln,sigma_ln),add=T, col=2)
+```
+
 
 ### Ex 4.48
 
@@ -93,5 +169,29 @@ When a government does not have enough money to pay for the services that it pro
 **Solution**
 
 
+### Ex. 5.68
+Explain why the confidence interval based on the Wald test of $H_0$: $\theta=\theta_0$ is symmetric around $\hat\theta$ (i.e., having center exactly equal to $\hat\theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat\theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.
 
+**Solution**
+According to Likelihood theory, the estimators asymptotically follow a normal distribution 
+$$
+\hat\theta \dot\sim N\Big(\theta,\frac{1}{I(\theta)}\Big)
+$$
+This implies that
+$$
+\frac{\hat\theta - \theta}{se}\ \dot\sim\ N(0,1)
+$$
+Since this statistic is symmetrical with respect to zero, the quantiles are also symmetrical and the confidence intervals are symmetrical around $\hat\theta$ by construction.
+
+With a simulation we can show that for the case of a population proportion, Wald confidence intervals contain the real value for the parameter very few times with respect to the expected amount. **This still does not show why the symmetry of the interval is problematic for certain values. SOLVE!**
+```{r}
+M<-1000;n<-20; p<-0.95; mat_ci<-matrix(NA,nrow=M,ncol=2)
+for(i in 1:M){
+  sam <- rbinom(n,1,p)
+  phat<-sum(sam)/n
+  se_t<-sqrt(phat*(1-phat)/n) * qnorm(0.975)
+  mat_ci[i,]<-phat + se_t*c(-1,1)
+}
+mean(mat_ci[,1]<=p & p<=mat_ci[,2])
+```
 
