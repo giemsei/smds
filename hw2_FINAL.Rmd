@@ -158,7 +158,7 @@ Now we calculate the estimation of $p$ using the score function $U(p)$:
 U(p)=\frac{\partial l(p)}{\partial p}=\frac{k}{p}-\frac{n-k}{1-p}=0
 \end{equation}
 
-Solving the equation for $p$ it gives the following estimation: $\hat p=0.517$.
+Solving the equation for $p$ it gives the following estimation: $\hat p=\frac{k}{n}=0.517$.
 We have to check if we have a maximum of the $l(p)$ function using the observed information function $J(p)$:
 
 \begin{equation}
