@@ -173,17 +173,13 @@ When a government does not have enough money to pay for the services that it pro
 Explain why the confidence interval based on the Wald test of $H_0$: $\theta=\theta_0$ is symmetric around $\hat\theta$ (i.e., having center exactly equal to $\hat\theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat\theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.
 
 **Solution**
-According to Likelihood theory, the estimators asymptotically follow a normal distribution 
+By construction the Wald intervals are symmetric around $\hat\theta$, since the lower and upper bounds are defined as
 $$
-\hat\theta \dot\sim N\Big(\theta,\frac{1}{I(\theta)}\Big)
+\hat\theta \pm z\ SE(\hat\theta)
 $$
-This implies that
-$$
-\frac{\hat\theta - \theta}{se}\ \dot\sim\ N(0,1)
-$$
-Since this statistic is symmetrical with respect to zero, the quantiles are also symmetrical and the confidence intervals are symmetrical around $\hat\theta$ by construction.
+This symmetry is problematic if $\theta$ or $\hat\theta$ are close to a boundary because when we construct the confidence interval we might get an interval which contains values outside of the support of the parameter. As a consequence, the coverage for Wald intervals is much worse than expected. The effect is damped by the growth of the sample size: as the size increases, the distribution of the estimate grows closer to a normal distribution and the standard error decreases. This results in smaller intervals which have an increasingly better coverage.
 
-With a simulation we can show that for the case of a population proportion, Wald confidence intervals contain the real value for the parameter very few times with respect to the expected amount. **This still does not show why the symmetry of the interval is problematic for certain values. SOLVE!**
+We can illustrate the poor coverage for small samples in the case of a population proportion with parameter $p$ close to 1. 
 ```{r}
 M<-1000;n<-20; p<-0.95; mat_ci<-matrix(NA,nrow=M,ncol=2)
 for(i in 1:M){
