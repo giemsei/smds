@@ -77,7 +77,7 @@ We can observe that the simulated values of the center and the spread are very c
 
 (c) It isn't unusual to sample a person with age 60 because it falls within 1 standard deviation of the population distribution with mean 72 and the population distribution is skewed to the left, so to lesser ages. But it will be unusual that the mean of a sample distribution of 100 residents is 60 because as we can see from the sampling distribution, that is the probability distribution for the possible values of the sample mean, we observe that the mean of the sample means is 70 with a standard error of 1.1. Moreover, the sample distribution more closely resembles the population distribution as $n$ increases.
 
-(d)
+(d) 
 
 ```{r, echo=TRUE}
 
@@ -114,84 +114,48 @@ hist(sample_means, main="", xlab="Sample Mean")
 
 Also the sampling distribution of size $n=90000$ has a normal distribution, the mean is close to the mean of the population distribution, but in this case the standard deviation is small. This means that the means of the population falls between a pretty shorter interval compared to the previuos one.
 
-## Ex. 3.28
+### Ex 3.28
 
 A survey is planned to estimate the population proportion $\pi$ supporting more government action to address global warming. For a simple random sample, if $\pi$ may be near 0.50, how large should n be so that the standard error of the sample proportion is 0.04?
 
 **Solution**
 
-The standard error for a proportion is 
-$$
+The standard error for a proportion is $$
 SE(\hat\pi) = \sqrt{\frac{\hat\pi(1-\hat\pi)}{n}}
 $$
 
-By solving for $n$ we can determine how big the sample should be in order to obtain a standard error equal to 0.04.
-$$
+By solving for $n$ we can determine how big the sample should be in order to obtain a standard error equal to 0.04. $$
 n = \frac{\hat\pi (1-\hat\pi)}{SE^2} = \frac{0.5^2}{0.04^2}= 156
 $$
 
-
 ## FSDS - Chapter 4
-### EX. 4.44
-Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the `Houses` data file mentioned in Exercise 4.31.
-(a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution.
-(b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters.
-(c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions.
-(d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
+
+### Ex 4.2
+
+For a sequence of observations of a binary random variable, you observe the geometric random variable (Section 2.2.2) outcome of the first success on observation number $y = 3$. Find and plot the likelihood function.
 
 **Solution**
+```{r 4.2.1}
 
-(a) The ML estimates for $\mu$ and $\sigma$ are
-$$
-\hat\mu = \frac{\sum_{i=1}^n y_i}{n}\\
-\hat\sigma=\sqrt\frac{\sum_{i=1}^n (y_i-\hat\mu)^2}{n}
-$$
-We evaluate them as
-```{r}
-library(MASS)
-df <- read.table("./Houses.dat.txt", header=TRUE,
-   sep="")
-prices<-df$price
-
-mu_n<-mean(prices)
-sigma_n<-sqrt(sum((prices-mu_n)^2)/length(prices))
-mu_n
-sigma_n
+curve(x*(1-x)^2,from = 0, to = 1, xlab="p", ylab = "p(1-p)^2")
 ```
 
-(b) For the lognormal distribution the estimates are
-$$
-\hat\mu = \frac{\sum_{i=1}^n \log y_i}{n}\\
-\hat\sigma=\sqrt\frac{\sum_{i=1}^n (\log y_i-\hat\mu)^2}{n}
-$$
-We evaluate them as
-```{r}
-log_prices<-log(prices)
-mu_ln<-mean(log_prices)
-sigma_ln<-sqrt(sum((log_prices-mu_ln)^2)/length(log_prices))
-mu_ln
-sigma_ln
+We do the same using `ggplot2`, an advanced R package to plot objects. We plot the liklihood functions for different values of y, in order to see what happened.
+```{r 4.2.2}
+library(ggplot2)
+base <-
+  ggplot() +
+  xlim(0, 1)
+
+base + geom_function(fun = function(x) x*(1-x)^2, aes(color = "red")) + theme_bw() + labs(x ="p") + labs(y="") + labs(title = "Likelihood function") +  geom_function(fun = function(x) x*(1-x), aes(color = "black")) +  geom_function(fun = function(x) x*(1-x)^3, aes(color = "green")) +  geom_function(fun = function(x) x*(1-x)^4, aes(color = "blue")) +  geom_function(fun = function(x) x*(1-x)^5, aes(color = "pink")) + labs(colour = "h") + scale_color_identity(name = "",
+                          breaks = c("black", "red", "green","blue", "pink"),
+                          labels = c("y=1", "y=2", "y=3","y=4","y=5"),
+                          guide = "legend")
+
+
+
+
 ```
-
-(c) For the normal distribution, the mean and variance of $Y$ are the parameters estimated in point (a), while the mean and variance for the lognormal distribution are
-$$
-E[Y] = e^{\mu+\sigma^2/2} \qquad var[Y]=(e^{\sigma^2}-1)E[Y]^2
-$$
-Using the estimates provided in (b), we get the values
-```{r}
-exp(mu_ln+sigma_ln^2/2) #mean
-sqrt((exp(sigma_ln^2)-1))*exp(mu_ln+sigma_ln^2/2) #sd
-```
-and we observe that while the means are very similar, the lognormal standard deviation is smaller.
-
-(d) We plot the histogram for the data and the distributions obtain with the estimated parameters and observe that the lognormal distribution (in red) seems to be in greater agreement with the data.
-```{r}
-hist.scott(prices,main="")
-curve( dnorm(x,mu_n,sigma_n),add=T)
-curve( dlnorm(x,mu_ln,sigma_ln),add=T, col=2)
-```
-
-
 ### Ex 4.4
 
 For the Students data file (Exercise 1.2 in Chapter 1) and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret.
@@ -202,7 +166,7 @@ The Students data file shows responses of a class of 60 students to a questionna
 
 ```{r, echo=TRUE}
 
-data <- read.table("Students.dat.txt", header = TRUE)
+data <- read.table("http://stat4ds.rwth-aachen.de/data/Students.dat", header = TRUE)
 tot <- data[, "life"]
 c <- tot[tot<2]
 length(c)
@@ -255,6 +219,93 @@ So the estimated confidence interval is:
 \end{equation}
 ```
 We can see that the estimation of the percentage of students that believe in a life after death is above $50\%$, but in an interval that can accept values even under $50\%$. We can conclude that roughly between $40\%$ and $60\%$ the population has a belief of life after death.
+
+### Ex 4.38
+
+For independent observations $y_1, \dots,y_n$ having the geometric distribution (2.1):
+
+1. Find a sufficient statistic for $\pi$.
+
+1. Derive the ML estimator of $\pi$.
+
+**Solution**
+
+Using that we have independent observation, we can write the joint distribution as follow:
+$$f(y_1, \dots, y_n)= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta $$
+Now let's express the liklihood function and manipulate it:
+\begin{align*}
+\ell(\theta) &= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta \\
+&= (1-\theta)^{(y_1-1)+ \dots (y_n - 1)}\theta^n \\
+&=  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^n \\
+&= \theta^n  (1-\theta)^{n\bar{Y}-n} \\
+&= \theta^n  (1-\theta)^{n\bar{Y}-n} \times 1
+\end{align*}
+Since only the statistic $\bar{Y} =\frac{1}{n} \sum_{i=1}^{n}y_i$ shows up in the part of $\ell(\theta)$ involving $\theta$, which is the parameter, by factorization theorem we have that $\bar{Y}$ is a sufficient statistic. 
+
+Now we use $\ell(\theta)$ to find the ML estimator for $\theta$.
+\begin{align*}
+0 = \dfrac{d\ell(\theta)}{d\theta} &=  (n-\sum_{i=1}^{n}y_i) (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n + n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^{n-1}\\
+& \Rightarrow n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)} \theta^{n-1} = \sum_{i=1}^{n}(y_i - 1)  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n \\
+& \Rightarrow n=  \sum_{i=1}^{n}(y_i - 1)  \frac{\theta}{1-\theta}
+ \\
+& \Rightarrow \theta = \frac{n}{\sum_{i=1}^{n}y_i}
+\end{align*}
+
+
+### Ex 4.44
+
+Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the `Houses` data file mentioned in Exercise 4.31. (a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution. (b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters. (c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions. (d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
+
+**Solution**
+
+(a) The ML estimates for $\mu$ and $\sigma$ are $$
+    \hat\mu = \frac{\sum_{i=1}^n y_i}{n}\\
+    \hat\sigma=\sqrt\frac{\sum_{i=1}^n (y_i-\hat\mu)^2}{n}
+    $$ We evaluate them as
+
+```{r}
+library(MASS)
+df <- read.table("http://stat4ds.rwth-aachen.de/data/Houses.dat", header=TRUE,
+   sep="")
+prices<-df$price
+
+mu_n<-mean(prices)
+sigma_n<-sqrt(sum((prices-mu_n)^2)/length(prices))
+mu_n
+sigma_n
+```
+
+(b) For the lognormal distribution the estimates are $$
+    \hat\mu = \frac{\sum_{i=1}^n \log y_i}{n}\\
+    \hat\sigma=\sqrt\frac{\sum_{i=1}^n (\log y_i-\hat\mu)^2}{n}
+    $$ We evaluate them as
+
+```{r}
+log_prices<-log(prices)
+mu_ln<-mean(log_prices)
+sigma_ln<-sqrt(sum((log_prices-mu_ln)^2)/length(log_prices))
+mu_ln
+sigma_ln
+```
+
+(c) For the normal distribution, the mean and variance of $Y$ are the parameters estimated in point (a), while the mean and variance for the lognormal distribution are $$
+    E[Y] = e^{\mu+\sigma^2/2} \qquad var[Y]=(e^{\sigma^2}-1)E[Y]^2
+    $$ Using the estimates provided in (b), we get the values
+
+```{r}
+exp(mu_ln+sigma_ln^2/2) #mean
+sqrt((exp(sigma_ln^2)-1))*exp(mu_ln+sigma_ln^2/2) #sd
+```
+
+and we observe that while the means are very similar, the lognormal standard deviation is smaller.
+
+(d) We plot the histogram for the data and the distributions obtain with the estimated parameters and observe that the lognormal distribution (in red) seems to be in greater agreement with the data.
+
+```{r}
+hist.scott(prices,main="")
+curve( dnorm(x,mu_n,sigma_n),add=T)
+curve( dlnorm(x,mu_ln,sigma_ln),add=T, col=2)
+```
 
 ### Ex 4.48
 
@@ -332,6 +383,73 @@ prop.test(success,n,h0,alt="two.sided",conf.level=0.95,correct=FALSE)
 
 The p-value for this test is equal to 0.166. This P-value is not very small, so the evidence against the $H_0$ is not strong. It is plausible that $\pi=0.50$ and so is not appropriate to accept $H_0$. There isn't sufficient evidence to determine whether a majority or minority of the population prefer to raise taxes or to reduce services!
 
+### Ex 5.12
+
+The example in Section 3.1.4 described an experimet to estimate the mean sales with a proposed menu for a new restaurant. In a revised experiment to compare two menus,on Tuesday of the opening week the owner gives customers menu $A$ and on Wednesdays he gives them menu $B$. The bills average $22.30\$$ for the 43 customers on Tuesday ($s = 6.88$) and $25.91\$$ for the 50 customers on Wednesday ($s = 8.01$). Under the strong assumption that her customers each night are comparable to a random sample from the conceptual population of potential customers, show how to compare the mean sales for the two menus based on 
+
+a. the P-value of a significance test, 
+
+b. a $95\%$ confidence interval. Which is more informative, and why? 
+
+(When used in an experiment to compare two treatments to determine which works better, a two-sample test is often called an $A/B$ test).
+
+**Solution**
+
+Information:
+
+$n_A=43$,
+$\mu_A=22.30$,
+$s_A=6.88$.
+
+$n_A=50$,
+$\mu_A=25.91$,
+$s_A=8.01$.
+
+Pooled standard deviation and $se$:
+$$s_p=  \sqrt{\frac{(n_A-1)s^2_A + (n_B-1)s^2_B}{n_A+n_B -2}}$$
+$$se=s_p \sqrt{\frac{1}{n_A}+\frac{1}{n_B}}$$
+```{r 5.12.1}
+n_A=43
+mu_A=22.30
+s_A=6.88
+
+n_B=50
+mu_B=25.91
+s_B=8.01
+
+s_p <- sqrt(((n_A-1)*s_A^2 + (n_B-1)*s_B^2)/(n_A+n_B-2))
+
+se <- s_p*sqrt(1/n_A +1/n_B)
+
+
+alpha <- 0.05
+
+z<-qt(1-alpha/2, n_A+n_B -2)
+
+z_obs <-abs((mu_A-mu_B))/se
+
+print(paste("critical value is",round(z, digits = 3)))
+print(paste("observed value of T test is",z_obs))
+
+pvalue <- 2*(1-pt(z_obs,n_A+n_B-2))
+print(paste("p-value is",pvalue))
+
+ 
+```
+P-value is between 0.01 and 0.05, so we have evidence against the null hypothesis.
+Moreover, p-level is less than the level $\alpha = 0.05$, so we would reject.
+
+```{r 5.12.2}
+inf <- mu_A-mu_B - z*se
+sup <- mu_A-mu_B + z*se
+
+print(paste("(",inf,sup,")","does not contain", 0))
+
+```
+At level $\alpha = 0.05$ of confidence, we reject the null hypothesis.
+
+Even if p-value is not very small, we notice that our $100(1-\alpha)\%$ confidence interval is quite wide. This confirm our intention to reject the null hypothesis and guarantees a practical significance in addition to the statistical significance of our tests.
+
 ### Ex 5.16
 
 An experiment used a sample of college students to investigate whether cell phone use impairs drivers' reaction times. On a machine that simulated driving situations, at irregular periods a target flashed red or green. Participants were instructed to press a brake button as soon as possible when they detected a red light. Under the cell phone condition, each student carried out a conversation on a cell phone with someone in a separate room. In the control condition, the same students listened to a radio broadcast. The CellPhone data file records the students' mean response times (in milliseconds) over several trials for each condition, {$y_{i1}$ for the cell phone condition and {$y_{i2}$} for control.
@@ -371,7 +489,7 @@ that, for observations from a normal distribution, has has a sampling distributi
 
 ```{r, echo=TRUE}
 
-data <- read.table("CellPhone.dat.txt", header = TRUE)
+data <- read.table("http://stat4ds.rwth-aachen.de/data/CellPhone.dat", header = TRUE)
 phone <- data[,"phone"]
 control <- data[,"control"]
 difference <- phone-control
@@ -380,17 +498,16 @@ t.test(difference)
 
 As we can see the p-value has a very small value that indicates a low probability that the null hypothesis is true. We can conclude that the use of phones modifies the reaction time.
 
-## Ex. 5.68
+### Ex 5.68
+
 Explain why the confidence interval based on the Wald test of $H_0$: $\theta=\theta_0$ is symmetric around $\hat\theta$ (i.e., having center exactly equal to $\hat\theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat\theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.
 
-**Solution**
-By construction the Wald intervals are symmetric around $\hat\theta$, since the lower and upper bounds are defined as
-$$
+**Solution** By construction the Wald intervals are symmetric around $\hat\theta$, since the lower and upper bounds are defined as $$
 \hat\theta \pm z\ SE(\hat\theta)
-$$
-This symmetry is problematic if $\theta$ or $\hat\theta$ are close to a boundary because when we construct the confidence interval we might get an interval which contains values outside of the support of the parameter. As a consequence, the coverage for Wald intervals is much worse than expected. The effect is damped by the growth of the sample size: as the size increases, the distribution of the estimate grows closer to a normal distribution and the standard error decreases. This results in smaller intervals which have an increasingly better coverage.
+$$ This symmetry is problematic if $\theta$ or $\hat\theta$ are close to a boundary because when we construct the confidence interval we might get an interval which contains values outside of the support of the parameter. As a consequence, the coverage for Wald intervals is much worse than expected. The effect is damped by the growth of the sample size: as the size increases, the distribution of the estimate grows closer to a normal distribution and the standard error decreases. This results in smaller intervals which have an increasingly better coverage.
 
-We can illustrate the poor coverage for small samples in the case of a population proportion with parameter $p$ close to 1. 
+We can illustrate the poor coverage for small samples in the case of a population proportion with parameter $p$ close to 1.
+
 ```{r}
 M<-1000;n<-20; p<-0.95; mat_ci<-matrix(NA,nrow=M,ncol=2)
 for(i in 1:M){
@@ -401,4 +518,3 @@ for(i in 1:M){
 }
 mean(mat_ci[,1]<=p & p<=mat_ci[,2])
 ```
-
