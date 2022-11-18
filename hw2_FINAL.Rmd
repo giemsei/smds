@@ -205,7 +205,7 @@ We have a maximum because $J(\hat p)>0$. We know that the sample proportion $\ha
 In which $z_{\alpha/2}$ is the standard normal percentiles for $\alpha=0.05$.
 
 ```{r, echo=TRUE}
-z <- qnorm(0.95)
+z <- qnorm(0.975)
 p <- 0.517
 n <- 60
 int <- z*sqrt(p*(1-p)/n)
@@ -216,7 +216,7 @@ So the estimated confidence interval is:
 
 ```{=tex}
 \begin{equation}
-0.517 \pm 0.106
+0.517 \pm 0.126
 \end{equation}
 ```
 We can see that the estimation of the percentage of students that believe in a life after death is above $50\%$, but in an interval that can accept values even under $50\%$. We can conclude that roughly between $40\%$ and $60\%$ the population has a belief of life after death.
