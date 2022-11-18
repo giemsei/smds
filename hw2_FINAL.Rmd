@@ -156,6 +156,7 @@ base + geom_function(fun = function(x) x*(1-x)^2, aes(color = "red")) + theme_bw
 
 
 ```
+
 ### Ex 4.4
 
 For the Students data file (Exercise 1.2 in Chapter 1) and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret.
