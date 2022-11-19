@@ -135,12 +135,14 @@ $$
 For a sequence of observations of a binary random variable, you observe the geometric random variable (Section 2.2.2) outcome of the first success on observation number $y = 3$. Find and plot the likelihood function.
 
 **Solution**
+
 ```{r 4.2.1}
 
 curve(x*(1-x)^2,from = 0, to = 1, xlab="p", ylab = "p(1-p)^2")
 ```
 
 We do the same using `ggplot2`, an advanced R package to plot objects. We plot the liklihood functions for different values of y, in order to see what happened.
+
 ```{r 4.2.2}
 library(ggplot2)
 base <-
@@ -225,37 +227,35 @@ We can see that the estimation of the percentage of students that believe in a l
 
 For independent observations $y_1, \dots,y_n$ having the geometric distribution (2.1):
 
-1. Find a sufficient statistic for $\pi$.
+1.  Find a sufficient statistic for $\pi$.
 
-1. Derive the ML estimator of $\pi$.
+2.  Derive the ML estimator of $\pi$.
 
 **Solution**
 
-Using that we have independent observation, we can write the joint distribution as follow:
-$$f(y_1, \dots, y_n)= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta $$
-Now let's express the liklihood function and manipulate it:
+Using that we have independent observation, we can write the joint distribution as follow: $$f(y_1, \dots, y_n)= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta $$ Now let's express the likelihood function and manipulate it:
+
 \begin{align*}
-\ell(\theta) &= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta \\
+L(\theta) &= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta \\
 &= (1-\theta)^{(y_1-1)+ \dots (y_n - 1)}\theta^n \\
 &=  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^n \\
 &= \theta^n  (1-\theta)^{n\bar{Y}-n} \\
 &= \theta^n  (1-\theta)^{n\bar{Y}-n} \times 1
-\end{align*}
-Since only the statistic $\bar{Y} =\frac{1}{n} \sum_{i=1}^{n}y_i$ shows up in the part of $\ell(\theta)$ involving $\theta$, which is the parameter, by factorization theorem we have that $\bar{Y}$ is a sufficient statistic. 
+\end{align*} Since only the statistic $\bar{Y} =\frac{1}{n} \sum_{i=1}^{n}y_i$ shows up in the part of $\ell(\theta)$ involving $\theta$, which is the parameter, by factorization theorem we have that $\bar{Y}$ is a sufficient statistic.
 
-Now we use $\ell(\theta)$ to find the ML estimator for $\theta$.
+Now we use $L(\theta)$ to find the ML estimator for $\theta$.
+
 \begin{align*}
-0 = \dfrac{d\ell(\theta)}{d\theta} &=  (n-\sum_{i=1}^{n}y_i) (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n + n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^{n-1}\\
+0 = \dfrac{dL(\theta)}{d\theta} &=  (n-\sum_{i=1}^{n}y_i) (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n + n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^{n-1}\\
 & \Rightarrow n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)} \theta^{n-1} = \sum_{i=1}^{n}(y_i - 1)  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n \\
 & \Rightarrow n=  \sum_{i=1}^{n}(y_i - 1)  \frac{\theta}{1-\theta}
  \\
 & \Rightarrow \theta = \frac{n}{\sum_{i=1}^{n}y_i}
 \end{align*}
 
-
 ### Ex 4.44
 
-Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the `Houses` data file mentioned in Exercise 4.31. (a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution. (b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters. (c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions. (d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
+Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the Houses data file mentioned in Exercise 4.31. (a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution. (b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters. (c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions. (d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
 
 **Solution**
 
@@ -386,11 +386,11 @@ The p-value for this test is equal to 0.166. This P-value is not very small, so 
 
 ### Ex 5.12
 
-The example in Section 3.1.4 described an experimet to estimate the mean sales with a proposed menu for a new restaurant. In a revised experiment to compare two menus,on Tuesday of the opening week the owner gives customers menu $A$ and on Wednesdays he gives them menu $B$. The bills average $22.30\$$ for the 43 customers on Tuesday ($s = 6.88$) and $25.91\$$ for the 50 customers on Wednesday ($s = 8.01$). Under the strong assumption that her customers each night are comparable to a random sample from the conceptual population of potential customers, show how to compare the mean sales for the two menus based on 
+The example in Section 3.1.4 described an experimet to estimate the mean sales with a proposed menu for a new restaurant. In a revised experiment to compare two menus,on Tuesday of the opening week the owner gives customers menu $A$ and on Wednesdays he gives them menu $B$. The bills average $22.30\$$ for the 43 customers on Tuesday ($s = 6.88$) and $25.91\$$ for the 50 customers on Wednesday ($s = 8.01$). Under the strong assumption that her customers each night are comparable to a random sample from the conceptual population of potential customers, show how to compare the mean sales for the two menus based on
 
-a. the P-value of a significance test, 
+a.  the P-value of a significance test,
 
-b. a $95\%$ confidence interval. Which is more informative, and why? 
+b.  a $95\%$ confidence interval. Which is more informative, and why?
 
 (When used in an experiment to compare two treatments to determine which works better, a two-sample test is often called an $A/B$ test).
 
@@ -398,17 +398,12 @@ b. a $95\%$ confidence interval. Which is more informative, and why?
 
 Information:
 
-$n_A=43$,
-$\mu_A=22.30$,
-$s_A=6.88$.
+$n_A=43$, $\mu_A=22.30$, $s_A=6.88$.
 
-$n_A=50$,
-$\mu_A=25.91$,
-$s_A=8.01$.
+$n_A=50$, $\mu_A=25.91$, $s_A=8.01$.
 
-Pooled standard deviation and $se$:
-$$s_p=  \sqrt{\frac{(n_A-1)s^2_A + (n_B-1)s^2_B}{n_A+n_B -2}}$$
-$$se=s_p \sqrt{\frac{1}{n_A}+\frac{1}{n_B}}$$
+Pooled standard deviation and $se$: $$s_p=  \sqrt{\frac{(n_A-1)s^2_A + (n_B-1)s^2_B}{n_A+n_B -2}}$$ $$se=s_p \sqrt{\frac{1}{n_A}+\frac{1}{n_B}}$$
+
 ```{r 5.12.1}
 n_A=43
 mu_A=22.30
@@ -437,8 +432,8 @@ print(paste("p-value is",pvalue))
 
  
 ```
-P-value is between 0.01 and 0.05, so we have evidence against the null hypothesis.
-Moreover, p-level is less than the level $\alpha = 0.05$, so we would reject.
+
+P-value is between 0.01 and 0.05, so we have evidence against the null hypothesis. Moreover, p-level is less than the level $\alpha = 0.05$, so we would reject.
 
 ```{r 5.12.2}
 inf <- mu_A-mu_B - z*se
@@ -447,6 +442,7 @@ sup <- mu_A-mu_B + z*se
 print(paste("(",inf,sup,")","does not contain", 0))
 
 ```
+
 At level $\alpha = 0.05$ of confidence, we reject the null hypothesis.
 
 Even if p-value is not very small, we notice that our $100(1-\alpha)\%$ confidence interval is quite wide. This confirm our intention to reject the null hypothesis and guarantees a practical significance in addition to the statistical significance of our tests.
