@@ -1,0 +1,517 @@
+---
+title: "GroupG_HM2"
+author: "Michele Alessi, Gianmarco Alessio, Gabriele Codega, Leonardo Musini"
+date: "2022-11-21"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## FSDS - Chapter 3
+
+### Ex 3.12
+
+Simulate a random sampling from a normal population distribution with several $n$ values to illustrate the law of large numbers.
+
+**Solution**
+
+We want to simulate a sample of $n=10$,$n=1000$,$n=1000000$ (the number of datasets to be simulated) and we generate an outcome ($\overline{y}$) with a normal population distribution of $mean=50$ and $var=10$. We took the mean of this outcomes for each 3 cases and to prove the law of large numbers we used *the convergence in probability* of $\overline{y}$ to $\mu$ for $n\to\infty$.
+
+```{r}
+set.seed(11)
+mean(rnorm(10,50,10));
+mean(rnorm(10^3, 50, 10));
+mean(rnorm(10^7,50,10))
+```
+
+As we can see the mean converge to $\mu=50$ as $n$ increase.
+
+### Ex 3.18
+
+Sunshine City, which attracts primarily retired people, has 90,000 residents with a mean age of 72 years and a standard deviation of 12 years. The age distribution is skewed to the left. A random sample of 100 residents of Sunshine City has $\overline y =70$ and $s = 11$.
+
+(a) Describe the center and spread of the (i) population distribution, (ii) sample data distribution. What shape does the sample data distribution probably have? Why?
+
+(b) Find the center and spread of the sampling distribution of $\overline Y$ for $n = 100$. What shape does it have and what does it describe?
+
+(c) Explain why it would not be unusual to sample a person of age 60 in Sunshine City, but it would be highly unusual for the sample mean to be 60, for a random sample of 100 residents.
+
+(d) Describe the sampling distribution of $\overline Y$ : (i) for a random sample of size $n = 1$; (ii) if you sample all 90,000 residents.
+
+**Solution**
+
+(a) Due to the fact the distribution is skewed to the left, the mean has a lesser value than the median and the mode, in particular $mean<median<mode$. Both for the population and the sample, the means of values respectively 72 and 70 and the two standard deviations 12 and 11 indicate that the residents are quite old. The sample data distribution is probably shaped as the population distribution, so skewed to the left, because the sample is a subset of the population and greater is the size $n$ of the sample, greater will be the similarity with the population distribution.
+
+(b) The center and the spread of a sampling distribution of the sample means $\overline{Y}$ are defined as:
+
+```{=tex}
+\begin{equation}
+E[\overline{Y}]=\mu \qquad SE(\overline{Y})=\frac{\sigma}{\sqrt(n)}
+\end{equation}
+```
+In which $\mu$ and $\sigma$ are respectively the mean and standard deviation of the sample. If we calculate the center and the spread with the corresponding values we'll obtain $E[\overline{Y}]=70$ and $SE(\overline{Y})=1.1$. The simulation of the sampling distribution for a sample of $n=100$ is:
+
+```{r, echo=TRUE}
+
+set.seed(1234)
+
+M <- 900; n <- 100
+sample_means <- rep(NA, M)
+for (j in 1:M){
+  sample_means[j] <- mean(rnorm(n, 70, 11))
+}
+
+mean(sample_means)
+sd(sample_means)
+
+hist(sample_means, main="", xlab="Sample Mean")
+
+```
+
+We can observe that the simulated values of the center and the spread are very close to those calculated theoretically. The sampling distribution is bell-shaped as we expect due to the Central Limit Theorem and it describes the probability of the statistic falling within a certain distance of the population parameter that it estimates, in this case the sample means.
+
+(c) It isn't unusual to sample a person with age 60 because it falls within 1 standard deviation of the population distribution with mean 72. But it will be unusual that the mean of a sample distribution of 100 residents is 60 because as we can see from the sampling distribution, that is the probability distribution for the possible values of the sample mean, we observe that the mean of the sample means is 70 with a standard error of 1.1 and the population distribution is skewed to the left, so with a maximum to greater ages. Moreover, the sample distribution more closely resembles the population distribution as $n$ increases.
+
+(d) 
+
+```{r, echo=TRUE}
+
+set.seed(1234)
+
+M <- 1000; n <- 1
+sample_means <- rep(NA, M)
+for (j in 1:M){
+  sample_means[j] <- mean(rnorm(n, 70, 11))
+}
+mean(sample_means)
+sd(sample_means)
+hist(sample_means, main="", xlab="Sample Mean")
+
+```
+
+The sampling distribution for samples of size $n=1$ shows a normal distribution, as we expect, and a mean very close to the mean of the $n=100$ sample distribution. The standard deviation $\sigma=10$ shows that with a probability close to 1 that the sample means fall roughly between 40 and 100.
+
+```{r, echo=TRUE}
+
+set.seed(1234)
+
+M <- 1000; n <- 90000
+sample_means <- rep(NA, M)
+for (j in 1:M){
+  sample_means[j] <- mean(rnorm(n, 72, 12))
+}
+
+mean(sample_means)
+sd(sample_means)
+hist(sample_means, main="", xlab="Sample Mean")
+
+```
+
+Also the sampling distribution of size $n=90000$ has a normal distribution, the mean is close to the mean of the population distribution, but in this case the standard deviation is small. This means that the means of the population falls between a pretty shorter interval compared to the previuos one.
+
+### Ex 3.28
+
+A survey is planned to estimate the population proportion $\pi$ supporting more government action to address global warming. For a simple random sample, if $\pi$ may be near 0.50, how large should n be so that the standard error of the sample proportion is 0.04?
+
+**Solution**
+
+The standard error for a proportion is $$
+SE(\hat\pi) = \sqrt{\frac{\hat\pi(1-\hat\pi)}{n}}
+$$
+
+By solving for $n$ we can determine how big the sample should be in order to obtain a standard error equal to 0.04. $$
+n = \frac{\hat\pi (1-\hat\pi)}{SE^2} = \frac{0.5^2}{0.04^2}= 156
+$$
+
+## FSDS - Chapter 4
+
+### Ex 4.2
+
+For a sequence of observations of a binary random variable, you observe the geometric random variable (Section 2.2.2) outcome of the first success on observation number $y = 3$. Find and plot the likelihood function.
+
+**Solution**
+
+```{r 4.2.1}
+
+curve(x*(1-x)^2,from = 0, to = 1, xlab="p", ylab = "p(1-p)^2")
+```
+
+We do the same using `ggplot2`, an advanced R package to plot objects. We plot the liklihood functions for different values of y, in order to see what happened.
+
+```{r 4.2.2}
+library(ggplot2)
+base <-
+  ggplot() +
+  xlim(0, 1)
+
+base + geom_function(fun = function(x) x*(1-x)^2, aes(color = "red")) + theme_bw() + labs(x ="p") + labs(y="") + labs(title = "Likelihood function") +  geom_function(fun = function(x) x*(1-x), aes(color = "black")) +  geom_function(fun = function(x) x*(1-x)^3, aes(color = "green")) +  geom_function(fun = function(x) x*(1-x)^4, aes(color = "blue")) +  geom_function(fun = function(x) x*(1-x)^5, aes(color = "pink")) + labs(colour = "h") + scale_color_identity(name = "",
+                          breaks = c("black", "red", "green","blue", "pink"),
+                          labels = c("y=1", "y=2", "y=3","y=4","y=5"),
+                          guide = "legend")
+
+
+
+
+```
+
+### Ex 4.4
+
+For the Students data file (Exercise 1.2 in Chapter 1) and corresponding population, find the ML estimate of the population proportion believing in life after death. Construct a Wald 95% confidence interval, using its formula (4.8). Interpret.
+
+**Solution**
+
+The Students data file shows responses of a class of 60 students to a questionnaire that asked about some topics. The question about life after death has 3 answers: yes, no, undecided. We can easily observe how many of them answered yes:
+
+```{r, echo=TRUE}
+
+data <- read.table("http://stat4ds.rwth-aachen.de/data/Students.dat", header = TRUE)
+tot <- data[, "life"]
+c <- tot[tot<2]
+length(c)
+
+```
+
+The proportion of population believing in life after death could be estimate using a binomial distribution function; indeed the proportion is the probability of students believing in afterlife. We can use the logarithm of the binomial distribution function to estimate the probability with the ML method:
+
+```{=tex}
+\begin{equation}
+l(p)=\log(\binom{n}{k}p^k(1-p)^{n-k})=\log(\binom{n}{k})+k\log(p)+(n-k)\log(1-p)
+\end{equation}
+```
+With $n=60$ the population and $k=31$ students who believe in afterlife. Now we calculate the estimation of $p$ using the score function $U(p)$:
+
+```{=tex}
+\begin{equation}
+U(p)=\frac{\partial l(p)}{\partial p}=\frac{k}{p}-\frac{n-k}{1-p}=0
+\end{equation}
+```
+Solving the equation for $p$ it gives the following estimation: $\hat p=\frac{k}{n}=0.517$. We have to check if we have a maximum of the $l(p)$ function using the observed information function $J(p)$:
+
+```{=tex}
+\begin{equation}
+J(\hat p)=-\frac{\partial^2 l(p)}{\partial p^2}=-(-\frac{k}{p^2}-\frac{n-k}{(1-p)^2})= \frac{k}{p}+\frac{n-k}{(1-p)^2}
+\end{equation}
+```
+We have a maximum because $J(\hat p)>0$. We know that the sample proportion $\hat p$ is the sample mean for binary data, the sampling distribution of the estimated proportion is approximately normal. We can construct a Wald 95% confidence interval using the following formula:
+
+```{=tex}
+\begin{equation}
+\hat p \pm z_{\alpha/2}\sqrt\frac{\hat p(1-\hat p)}{n}
+\end{equation}
+```
+In which $z_{\alpha/2}$ is the standard normal percentiles for $\alpha=0.05$.
+
+```{r, echo=TRUE}
+z <- qnorm(0.975)
+p <- 0.517
+n <- 60
+int <- z*sqrt(p*(1-p)/n)
+int
+```
+
+So the estimated confidence interval is:
+
+```{=tex}
+\begin{equation}
+0.517 \pm 0.126
+\end{equation}
+```
+We can see that the estimation of the percentage of students that believe in a life after death is above $50\%$, but in an interval that can accept values even under $50\%$. We can conclude that roughly between $40\%$ and $60\%$ the population has a belief of life after death.
+
+### Ex 4.38
+
+For independent observations $y_1, \dots,y_n$ having the geometric distribution (2.1):
+
+1.  Find a sufficient statistic for $\pi$.
+
+2.  Derive the ML estimator of $\pi$.
+
+**Solution**
+
+Using that we have independent observation, we can write the joint distribution as follow: $$f(y_1, \dots, y_n)= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta $$ Now let's express the likelihood function and manipulate it:
+
+\begin{align*}
+L(\theta) &= \Pi_{i=1}^n (1-\theta)^{y_i-1}\theta \\
+&= (1-\theta)^{(y_1-1)+ \dots (y_n - 1)}\theta^n \\
+&=  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^n \\
+&= \theta^n  (1-\theta)^{n\bar{Y}-n} \\
+&= \theta^n  (1-\theta)^{n\bar{Y}-n} \times 1
+\end{align*} Since only the statistic $\bar{Y} =\frac{1}{n} \sum_{i=1}^{n}y_i$ shows up in the part of $\ell(\theta)$ involving $\theta$, which is the parameter, by factorization theorem we have that $\bar{Y}$ is a sufficient statistic.
+
+Now we use $L(\theta)$ to find the ML estimator for $\theta$.
+
+\begin{align*}
+0 = \dfrac{dL(\theta)}{d\theta} &=  (n-\sum_{i=1}^{n}y_i) (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n + n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)}\theta^{n-1}\\
+& \Rightarrow n(1-\theta)^{\sum_{i=1}^{n}(y_i - 1)} \theta^{n-1} = \sum_{i=1}^{n}(y_i - 1)  (1-\theta)^{\sum_{i=1}^{n}(y_i - 1)-1}\theta^n \\
+& \Rightarrow n=  \sum_{i=1}^{n}(y_i - 1)  \frac{\theta}{1-\theta}
+ \\
+& \Rightarrow \theta = \frac{n}{\sum_{i=1}^{n}y_i}
+\end{align*}
+
+### Ex 4.44
+
+Refer to the previous two exercises. Consider the selling prices (in thousands of dollars) in the Houses data file mentioned in Exercise 4.31. (a) Fit the normal distribution to the data by finding the ML estimates of $\mu$ and $\sigma$ for that distribution. (b) Fit the log-normal distribution to the data by finding the ML estimates of its parameters. (c) Find and compare the ML estimates of the mean and standard deviation of selling price for the two distributions. (d) Superimpose the fitted normal and log-normal distributions on a histogram of the data. Which distribution seems to be more appropriate for summarizing the selling prices?
+
+**Solution**
+
+(a) The ML estimates for $\mu$ and $\sigma$ are $$
+    \hat\mu = \frac{\sum_{i=1}^n y_i}{n}\\
+    \hat\sigma=\sqrt\frac{\sum_{i=1}^n (y_i-\hat\mu)^2}{n}
+    $$ We evaluate them as
+
+```{r}
+library(MASS)
+df <- read.table("http://stat4ds.rwth-aachen.de/data/Houses.dat", header=TRUE,
+   sep="")
+prices<-df$price
+
+mu_n<-mean(prices)
+sigma_n<-sqrt(sum((prices-mu_n)^2)/length(prices))
+mu_n
+sigma_n
+```
+
+(b) For the lognormal distribution the estimates are $$
+    \hat\mu = \frac{\sum_{i=1}^n \log y_i}{n}\\
+    \hat\sigma=\sqrt\frac{\sum_{i=1}^n (\log y_i-\hat\mu)^2}{n}
+    $$ We evaluate them as
+
+```{r}
+log_prices<-log(prices)
+mu_ln<-mean(log_prices)
+sigma_ln<-sqrt(sum((log_prices-mu_ln)^2)/length(log_prices))
+mu_ln
+sigma_ln
+```
+
+(c) For the normal distribution, the mean and variance of $Y$ are the parameters estimated in point (a), while the mean and variance for the lognormal distribution are $$
+    E[Y] = e^{\mu+\sigma^2/2} \qquad var[Y]=(e^{\sigma^2}-1)E[Y]^2
+    $$ Using the estimates provided in (b), we get the values
+
+```{r}
+exp(mu_ln+sigma_ln^2/2) #mean
+sqrt((exp(sigma_ln^2)-1))*exp(mu_ln+sigma_ln^2/2) #sd
+```
+
+and we observe that while the means are very similar, the lognormal standard deviation is smaller.
+
+(d) We plot the histogram for the data and the distributions obtain with the estimated parameters and observe that the lognormal distribution (in red) seems to be in greater agreement with the data.
+
+```{r}
+hist.scott(prices,main="")
+curve( dnorm(x,mu_n,sigma_n),add=T)
+curve( dlnorm(x,mu_ln,sigma_ln),add=T, col=2)
+```
+
+### Ex 4.48
+
+For a simple random sample of $n$ subjects, explain why it is about $95\%$ likely that the sample proportion has error no more that $1/\sqrt{n}$ in estimating the population proportion. (*Hint*: To show this "$1/\sqrt{n}$ rule", find two standard errors when $\pi=0.50$, and explain how this compares to two standard errors at other values of $\pi$). Using this result, show that $n=1/M^2$ is a safe sample size for estimating a proportion to within $M$ with $95\%$ confidence.
+
+**Solution**
+
+The sampling distribution of the simple random sample $\hat{\pi}$ is approximately normal for large $n$. So the Pivotal Quantity
+
+$$Z=\frac{\hat{\pi}-\pi}{\sqrt{\frac{\pi(1-\pi)}{n}}}$$
+
+has an approximate standard normal distribution. Bounding this between standard normal percentiles, to construct a CI for $\pi$ after observing the simple random sample $\hat{\pi}$.
+
+$$\hat{\pi} -\pi=\pm z_{\alpha/2}\sqrt{\frac{\pi(1-\pi)}{n}}$$ From here we use the simple approximate formula for large $n$ (Wald confidence interval) to easily compute the CI:
+
+$$\hat{\pi}\pm z_{\alpha/2} \sqrt{\frac{\hat{\pi}(1-\hat{\pi})}{n}}$$ So from the exercise we assume the confidence level of $1-\alpha=0.95$ and since $95\%$ of the standard normal distribution falls between $-1.96$ and $1.96$ we have:
+
+$$\hat{\pi}\pm 1.96 \sqrt{\frac{\hat{\pi}(1-\hat{\pi})}{n}}$$ We can observe $1.96\sim2.00$ (the exercise sugestion) and $\sqrt{\hat{\pi}(1-\hat{\pi})}\sim 0.50$ (considering $\hat{\pi}=0.50$) so:
+
+$$\hat{\pi}\pm \frac{1}{\sqrt{n}}$$ And with a simple simulation we can verify that:
+
+```{r}
+set.seed(11)
+simulation <- 100
+size<-100
+thresholdrule <- 1/sqrt(size)
+
+standarderror <- function(phi){
+y<-rbinom(simulation,size,phi)
+p<-y/size
+sd <- sqrt(p*(1-p)/size)
+return (sd)
+}
+
+#standarderror(0.50)
+#standarderror(0.10)
+
+
+all(standarderror(0.50)<thresholdrule)
+all(standarderror(0.10)<thresholdrule)
+
+```
+
+Then if we consider the sample size $n=1/M^2$ and at the same time we want $n$ to be able to estimate $\pi$. We have
+
+$$\hat{\pi}\pm M$$
+
+## FSDS - Chapter 5
+
+### Ex 5.2
+
+When a government does not have enough money to pay for the services that it provides, it can raise taxes or it can reduce services. When the Florida Poll asked a random sample of 1200 Floridians which they preferred, 52% (624 of the 1200) chose raise taxes and 48% chose reduce services. Let $\pi$ denote the population proportion of Floridians who would choose raising taxes. Analyze whether this is a minority of the population ($\pi < 0.50$) or a majority ($\pi > 0.50$) by testing $H_0 ∶ \pi = 0.50$ against $H_a: π \ne 0.50$. Interpret the P-value.Is it appropriate to "accept $H_0$? Why or whynot?
+
+**Solution**
+
+We are dealing with categorical variables such as
+
+1.  Floridians who choose to raise taxes ($624$ persons)
+2.  Floridians who choose to reduce services ($1200-624= 576$ persons)
+
+The parameters are the populations proportions for the categories, in this case we have $\pi=0.52$ and $1-\pi=0.48$ respectively. As usual for statistical inference, we assume that the data is obtained using randomization. The sample size should be sufficiently large that the sampling distribution of $\hat{\pi}$ is approximately normal (follow Central limit Theorem). This is satisfied when the expected number of observations is at least 10 for both categories and in this case it is (624 and 576).
+
+Then presuming that $H_0:\pi=0.50$ is true we compute the standard error of $\hat{\pi}$: $$se_0=\sqrt{\frac{\pi_0(1-\pi_0)}{n}}=\sqrt{\frac{0.5\cdot0.5}{1200}}=0.014$$ In the pool $52\%$ said to raise taxes (624 of the 1200). With $\hat{\pi}=0.52$, then the test statistics equal to $$z=\frac{\hat{\pi}-\pi_0}{se_0}=\frac{0.52- 0.50}{0.014}=1.43$$
+
+The test statistic summarizes how far that point estimates falls from the parameter value in $H_0$, such as by the number of standard errors between them. We compute in R the Significance test for the proportion:
+
+```{r}
+h0<-0.5
+n<-1200
+success<-624
+
+prop.test(success,n,h0,alt="two.sided",conf.level=0.95,correct=FALSE)
+
+```
+
+The p-value for this test is equal to 0.166. This P-value is not very small, so the evidence against the $H_0$ is not strong. It is plausible that $\pi=0.50$ and so is appropriate to accept $H_0$. There isn't sufficient evidence to determine whether a majority or minority of the population prefer to raise taxes or to reduce services!
+
+### Ex 5.12
+
+The example in Section 3.1.4 described an experimet to estimate the mean sales with a proposed menu for a new restaurant. In a revised experiment to compare two menus,on Tuesday of the opening week the owner gives customers menu $A$ and on Wednesdays he gives them menu $B$. The bills average $22.30\$$ for the 43 customers on Tuesday ($s = 6.88$) and $25.91\$$ for the 50 customers on Wednesday ($s = 8.01$). Under the strong assumption that her customers each night are comparable to a random sample from the conceptual population of potential customers, show how to compare the mean sales for the two menus based on
+
+a.  the P-value of a significance test,
+
+b.  a $95\%$ confidence interval. Which is more informative, and why?
+
+(When used in an experiment to compare two treatments to determine which works better, a two-sample test is often called an $A/B$ test).
+
+**Solution**
+
+Information:
+
+$n_A=43$, $\mu_A=22.30$, $s_A=6.88$.
+
+$n_A=50$, $\mu_A=25.91$, $s_A=8.01$.
+
+Pooled standard deviation and $se$: $$s_p=  \sqrt{\frac{(n_A-1)s^2_A + (n_B-1)s^2_B}{n_A+n_B -2}}$$ $$se=s_p \sqrt{\frac{1}{n_A}+\frac{1}{n_B}}$$
+
+```{r 5.12.1}
+n_A=43
+mu_A=22.30
+s_A=6.88
+
+n_B=50
+mu_B=25.91
+s_B=8.01
+
+s_p <- sqrt(((n_A-1)*s_A^2 + (n_B-1)*s_B^2)/(n_A+n_B-2))
+
+se <- s_p*sqrt(1/n_A +1/n_B)
+
+
+alpha <- 0.05
+
+z<-qt(1-alpha/2, n_A+n_B -2)
+
+z_obs <-abs((mu_A-mu_B))/se
+
+print(paste("critical value is",round(z, digits = 3)))
+print(paste("observed value of T test is",z_obs))
+
+pvalue <- 2*(1-pt(z_obs,n_A+n_B-2))
+print(paste("p-value is",pvalue))
+
+ 
+```
+
+P-value is between 0.01 and 0.05, so we have evidence against the null hypothesis. Moreover, p-level is less than the level $\alpha = 0.05$, so we would reject.
+
+```{r 5.12.2}
+inf <- mu_A-mu_B - z*se
+sup <- mu_A-mu_B + z*se
+
+print(paste("(",inf,sup,")","does not contain", 0))
+
+```
+
+At level $\alpha = 0.05$ of confidence, we reject the null hypothesis.
+
+Even if p-value is not very small, we notice that our $100(1-\alpha)\%$ confidence interval is quite wide. This confirm our intention to reject the null hypothesis and guarantees a practical significance in addition to the statistical significance of our tests.
+
+### Ex 5.16
+
+An experiment used a sample of college students to investigate whether cell phone use impairs drivers' reaction times. On a machine that simulated driving situations, at irregular periods a target flashed red or green. Participants were instructed to press a brake button as soon as possible when they detected a red light. Under the cell phone condition, each student carried out a conversation on a cell phone with someone in a separate room. In the control condition, the same students listened to a radio broadcast. The CellPhone data file records the students' mean response times (in milliseconds) over several trials for each condition, {$y_{i1}$ for the cell phone condition and {$y_{i2}$} for control.
+
+(a) The comparisons of means or proportions in this chapter assume independent samples for the two groups. Explain why the samples for these two conditions are dependent rather than independent.
+
+(b) To compare $\mu_1$ and $\mu_2$, you can use {$d_i = y_{i1} − y_{i2}$, $i = 1, . . . , n$}, here with $n = 8$. Specify the parameter $\mu_d$ and $H_0$ for doing this, and explain why $\mu_d = \mu_1 − \mu_2$.
+
+(c) State the assumptions and test statistic, explain why it has a t distribution with $df = n−1$. Report the P-value with two-sided $H_a$, and interpret. (The test is called a matched-pairs t test. Matched-pairs analyses also are possible with confidence intervals, as Section 4.4.3 did in comparing weights of anorexic girls before and after a period of treatment by analyzing the mean difference in weights.)
+
+**Solution**
+
+(a) In this case the samples for the phone and for the radio conditions are dependent because they are the reaction times mean of the same 8 students. So each pair of data is influenced by the same reaction capability without condition of the same student. The reaction times of phone sample are shifted compared to the control sample.
+
+(b) We can easily calculate $\mu_d$ as the mean of the samples difference:
+
+```{=tex}
+\begin{equation}
+\mu_d =\frac{1}{n}\sideset{}{_{i=1}^n}\sum (y_{1i}-y_{2i})
+\end{equation}
+```
+We can also choose the null hypothesis as the assumption that the use of phone don't influence the reaction times of the students: $H_0:\mu_d=0$. We can easily show $\mu_d=\mu_1-\mu_2$ with the following demonstration:
+
+```{=tex}
+\begin{equation}
+\mu_d=\frac{1}{n}\sideset{}{_{i=1}^n}\sum (y_{1i}-y_{2i})=\frac{\sideset{}{_{i=1}^n}\sum y_{1i}}{n}- \frac{\sideset{}{_{i=1}^n}\sum y_{2i}}{n}=\mu_1-\mu_2
+\end{equation}
+```
+(c) The principal assumption is that the two samples means are normally distributed, so we can assume that even the differences have a normal distribution. In point $b.$ we chose the null hypothesis as $H_o:\mu_d=0$, so if we want a two-sided hypothesis test we can choose the alternative hypothesis as $H_a:\mu_d \neq 0$, that is the assumption that the use of phone change the reaction times of the students. The test statistic for a significance test for a mean is in this case is a $t$ distribution:
+
+```{=tex}
+\begin{equation}
+T=\frac{\overline Y}{SE} \qquad with \quad SE=\frac{s}{\sqrt n}
+\end{equation}
+```
+that, for observations from a normal distribution, has has a sampling distribution over the entire real line that is slightly more spread out than the standard normal distribution. The degrees of freedom are $df=n-1$ because, even if we are comparing two sample of means, we are doing a significance test for the difference of the means $d_i$, so an inference about a single population mean.
+
+```{r, echo=TRUE}
+
+data <- read.table("http://stat4ds.rwth-aachen.de/data/CellPhone.dat", header = TRUE)
+phone <- data[,"phone"]
+control <- data[,"control"]
+difference <- phone-control
+t.test(difference)
+```
+
+As we can see the p-value has a very small value that indicates a low probability that the null hypothesis is true. We can conclude that the use of phones modifies the reaction time.
+
+### Ex 5.68
+
+Explain why the confidence interval based on the Wald test of $H_0$: $\theta=\theta_0$ is symmetric around $\hat\theta$ (i.e., having center exactly equal to $\hat\theta$. This is not true for the confidence intervals based on the likelihood-ratio and score tests.) Explain why such symmetry can be problematic when $\theta$ and $\hat\theta$ are near a boundary, using the example of a population proportion that is very close to 0 or 1 and a sample proportion that may well equal 0 or 1.
+
+**Solution** By construction the Wald intervals are symmetric around $\hat\theta$, since the lower and upper bounds are defined as $$
+\hat\theta \pm z\ SE(\hat\theta)
+$$ This symmetry is problematic if $\theta$ or $\hat\theta$ are close to a boundary because when we construct the confidence interval we might get an interval which contains values outside of the support of the parameter. As a consequence, the coverage for Wald intervals is much worse than expected. The effect is damped by the growth of the sample size: as the size increases, the distribution of the estimate grows closer to a normal distribution and the standard error decreases. This results in smaller intervals which have an increasingly better coverage.
+
+We can illustrate the poor coverage for small samples in the case of a population proportion with parameter $p$ close to 1.
+
+```{r}
+M<-1000;n<-20; p<-0.95; mat_ci<-matrix(NA,nrow=M,ncol=2)
+for(i in 1:M){
+  sam <- rbinom(n,1,p)
+  phat<-sum(sam)/n
+  se_t<-sqrt(phat*(1-phat)/n) * qnorm(0.975)
+  mat_ci[i,]<-phat + se_t*c(-1,1)
+}
+mean(mat_ci[,1]<=p & p<=mat_ci[,2])
+```
