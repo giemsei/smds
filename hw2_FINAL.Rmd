@@ -378,7 +378,7 @@ h0<-0.5
 n<-1200
 success<-624
 
-prop.test(success,n,h0,alt="two.sided",conf.level=0.95,correct=FALSE)
+prop.test(success,n,h0,alt="two.sided",conf.level=0.99,correct=FALSE)
 
 ```
 
