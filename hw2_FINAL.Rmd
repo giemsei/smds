@@ -382,7 +382,7 @@ prop.test(success,n,h0,alt="two.sided",conf.level=0.95,correct=FALSE)
 
 ```
 
-The p-value for this test is equal to 0.166. This P-value is not very small, so the evidence against the $H_0$ is not strong. It is plausible that $\pi=0.50$ and so is not appropriate to accept $H_0$. There isn't sufficient evidence to determine whether a majority or minority of the population prefer to raise taxes or to reduce services!
+The p-value for this test is equal to 0.166. This P-value is not very small, so the evidence against the $H_0$ is not strong. It is plausible that $\pi=0.50$ and so is appropriate to accept $H_0$. There isn't sufficient evidence to determine whether a majority or minority of the population prefer to raise taxes or to reduce services!
 
 ### Ex 5.12
 
