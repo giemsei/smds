@@ -63,7 +63,7 @@ set.seed(1234)
 M <- 900; n <- 100
 sample_means <- rep(NA, M)
 for (j in 1:M){
-  sample_means[j] <- mean(rnorm(n, 70, 11))
+  sample_means[j] <- mean(rnorm(n, 72, 12))
 }
 
 mean(sample_means)
@@ -75,7 +75,7 @@ hist(sample_means, main="", xlab="Sample Mean")
 
 We can observe that the simulated values of the center and the spread are very close to those calculated theoretically. The sampling distribution is bell-shaped as we expect due to the Central Limit Theorem and it describes the probability of the statistic falling within a certain distance of the population parameter that it estimates, in this case the sample means.
 
-(c) It isn't unusual to sample a person with age 60 because it falls within 1 standard deviation of the population distribution with mean 72. But it will be unusual that the mean of a sample distribution of 100 residents is 60 because as we can see from the sampling distribution, that is the probability distribution for the possible values of the sample mean, we observe that the mean of the sample means is 70 with a standard error of 1.1 and the population distribution is skewed to the left, so with a maximum to greater ages. Moreover, the sample distribution more closely resembles the population distribution as $n$ increases.
+(c) It isn't unusual to sample a person with age 60 because it falls within 1 standard deviation of the population distribution with mean 72. But it will be unusual that the mean of a sample distribution of 100 residents is 60 because as we can see from the sampling distribution, that is the probability distribution for the possible values of the sample mean, we observe that the mean of the sample means is 72 with a standard error of 1.2 and the population distribution is skewed to the left, so with a maximum to greater ages. Moreover, the sample distribution more closely resembles the population distribution as $n$ increases.
 
 (d) 
 
@@ -86,7 +86,7 @@ set.seed(1234)
 M <- 1000; n <- 1
 sample_means <- rep(NA, M)
 for (j in 1:M){
-  sample_means[j] <- mean(rnorm(n, 70, 11))
+  sample_means[j] <- mean(rnorm(n, 72, 12))
 }
 mean(sample_means)
 sd(sample_means)
@@ -94,7 +94,7 @@ hist(sample_means, main="", xlab="Sample Mean")
 
 ```
 
-The sampling distribution for samples of size $n=1$ shows a normal distribution, as we expect, and a mean very close to the mean of the $n=100$ sample distribution. The standard deviation $\sigma=10$ shows that with a probability close to 1 that the sample means fall roughly between 40 and 100.
+The sampling distribution for samples of size $n=1$ shows a normal distribution, as we expect, and a mean very close to the mean of the population distribution. The standard deviation $\sigma=12$ shows that with a probability close to 1 that the sample means fall roughly between 40 and 100.
 
 ```{r, echo=TRUE}
 
